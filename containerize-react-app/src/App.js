@@ -1,7 +1,7 @@
 function App() {
   return (
     <div className="App">
-      <h2>containerize react and django is is coming for docker</h2>
+      <h2>containerize react and django</h2>
     </div>
   );
 }
