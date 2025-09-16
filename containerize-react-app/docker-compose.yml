@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: "./Docker/local/Dockerfile"
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - .:/app
+
+    command: npm start
