@@ -1,0 +1,49 @@
+name: key-value-app
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Docker/local/Node/Docker
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env/.env.db-root-value
+    networks:
+      - key-value-net
+    volumes:
+      - type: bind
+        source: /app
+        target: /app
+    depends_on:
+      - db
+    
+    # hard reload
+    develop:
+      watch:
+        - path: ./backend/src
+          action: sync
+          target: 
+  db:
+    image: mongodb/mongodb-community-server:7.0.24-ubi8-ubi8-20250919T081054Z
+    ports:
+      - 27017:27017
+    env_file:
+      - ./.env/.env.db-root-creds
+      - ./.env/.env.db-root-value
+    volumes:
+      - type: bind
+        source: ./db-config/mongo-init.js
+        target: /docker-entrypoint-initdb.d/mongo-init.js
+        read_only: true
+      - type: volume
+        source: my-custom-mongo-volume
+        target: /data/db
+
+    networks:
+      - key-value-net
+
+volumes:
+  my-custom-mongo-volume:
+
+networks:
+  key-value-net:
