@@ -16,13 +16,13 @@ services:
         target: /app
     depends_on:
       - db
-    
+
     # hard reload
     develop:
       watch:
         - path: ./backend/src
           action: sync
-          target: 
+          target: /app
   db:
     image: mongodb/mongodb-community-server:7.0.24-ubi8-ubi8-20250919T081054Z
     ports:

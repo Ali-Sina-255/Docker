@@ -1,5 +1,3 @@
-name: notebooks-backend
-
 services:
   notebooks:
     build:
@@ -7,16 +5,38 @@ services:
       dockerfile: docker/local/node/Dockerfile
     ports:
       - "3000:80"
+    env_file:
+      - ".env/.env"
     environment:
       - PORT=80
+      - DB_URL
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+    networks:
+      - notebook-net
+    depends_on:
+      - notebook-db
 
-    # volumes:
-    #   - type: bind
-    #     source: .
-    #     target: /app
+  notebook-db:
+    image: mongo:7.0 #
+    ports:
+      - 27017:27017
+    env_file:
+      - ".env/.env"
+    volumes:
+      - type: volume
+        source: notebook-data
+        target: /data/db
+      - type: bind
+        source: ./db-config/mongo-init.js
+        target: /docker-entrypoint-initdb.d/mongo-init.js
+        read_only: true
+    networks:
+      - notebook-net
 
-    develop:
-      watch:
-        - path: ./src
-          action: sync
-          target: /app/src
+volumes:
+  notebook-data:
+networks:
+  notebook-net:
