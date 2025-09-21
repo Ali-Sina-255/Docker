@@ -1,25 +1,25 @@
 services:
-  notebooks:
+  notes:
     build:
       context: .
       dockerfile: docker/local/node/Dockerfile
     ports:
-      - "3000:80"
+      - "3001:80"
     env_file:
       - ".env/.env"
     environment:
       - PORT=80
-      - DB_URL=mongodb://nb_user:nb_pwd@notebook-db/notebook_db
+      - DB_URL=mongodb://nb_user:nb_pwd@notes-db/note-db
     volumes:
       - type: bind
         source: .
         target: /app
     networks:
-      - notebook-net
+      - note-net
     depends_on:
-      - notebook-db
+      - notes-db
 
-  notebook-db:
+  notes-db:
     image: mongo:7.0 #
     ports:
       - 27017:27017
@@ -27,16 +27,16 @@ services:
       - ".env/.env"
     volumes:
       - type: volume
-        source: notebook-data
+        source: notes-db
         target: /data/db
       - type: bind
         source: ./db-config/mongo-init.js
         target: /docker-entrypoint-initdb.d/mongo-init.js
         read_only: true
     networks:
-      - notebook-net
+      - note-net
 
 volumes:
-  notebook-data:
+  notes-db:
 networks:
-  notebook-net:
+  note-net:

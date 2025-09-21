@@ -1,24 +1,26 @@
 const express = require("express");
-
 const mongoose = require("mongoose");
+
+const port = process.env.PORT;
+const dbUrl = process.env.DB_URL;
 
 const app = express();
 
 app.get("/", (req, res) => {
-  res.json({ message: "hello from Notebook is working watch " });
+  res.json({
+    message: "Hello from Notebook — it is working with watch mode.!",
+  });
 });
 
-const port = process.env.PORT;
-
 mongoose
-  .connect(process.env.DB_URL)
+  .connect(dbUrl)
   .then(() => {
-    console.log("mongo connected successfully");
+    console.log("✅ MongoDB connected successfully");
     app.listen(port, () => {
-      console.log(`Notebook is listening on part ${port}`);
+      console.log(`✅ Notebook server is listening on port ${port}`);
     });
   })
   .catch((error) => {
-    console.log("something is wrong!");
-    console.log(error);
+    console.error("❌ Failed to connect to MongoDB:");
+    console.error(error);
   });
