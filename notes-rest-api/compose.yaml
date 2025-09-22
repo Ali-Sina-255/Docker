@@ -1,0 +1,12 @@
+include:
+  - path: notebooks-backend/compose.yaml
+  - path: notes-backend/compose.yaml
+
+services:
+  reverse-proxy:
+  image: nginx:1.27.0
+  ports:
+    - 6000:80
+  depends_on:
+    - notebooks
+    - notes
