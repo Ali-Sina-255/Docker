@@ -6,7 +6,7 @@ const dbUrl = process.env.DB_URL;
 
 const app = express();
 
-app.get("/", (req, res) => {
+app.get("/api/notebooks", (req, res) => {
   res.json({
     message: "Hello from Notebook — it is working with watch mode.!",
   });

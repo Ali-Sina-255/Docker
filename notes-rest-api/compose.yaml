@@ -5,8 +5,18 @@ include:
 services:
   reverse-proxy:
   image: nginx:1.27.0
+  volumes:
+    - type: bind
+      source: ./reverse-proxy/nginx.conf
+      target: /etc/nginx/nginx.conf
+
   ports:
     - 6000:80
   depends_on:
     - notebooks
     - notes
+  networks:
+    - notes-app-network
+
+networks:
+  notes-app-network:
