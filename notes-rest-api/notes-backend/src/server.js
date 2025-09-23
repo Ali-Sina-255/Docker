@@ -1,16 +1,15 @@
-const express = require("express");
-const mongoose = require("mongoose");
-
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
 const port = process.env.PORT;
 const dbUrl = process.env.DB_URL;
 
+import { noteRoutes } from "./routes/routes.js";
 const app = express();
 
-app.get("/api/notes", (req, res) => {
-  res.json({
-    message: "Hello from Notebook — it is working with watch mode.!",
-  });
-});
+app.use(bodyParser.json());
+
+app.use("/api/notes", noteRoutes);
 
 mongoose
   .connect(dbUrl)
