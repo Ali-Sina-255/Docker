@@ -1,7 +1,8 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const { notebookRoutes } = require("./routes");
-const bodyParser = require("body-parser");
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import { notebookRoutes } from "./routes.js"; // 👈 Don't forget the .js extension!
+
 const port = process.env.PORT;
 const dbUrl = process.env.DB_URL;
 const app = express();

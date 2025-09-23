@@ -22,7 +22,8 @@ services:
   notebook-db:
     image: mongo:7.0 #
     ports:
-      - 27017:27017
+      - "27018:27017"
+
     env_file:
       - ".env/.env"
     volumes:
