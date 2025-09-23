@@ -2,7 +2,9 @@ import express from "express";
 import httpStatus from "http-status";
 import { Note } from "../models/notes.model.js";
 import mongoose from "mongoose";
+import axios from "axios";
 
+const notebooksAPIUrl = process.env.NOTEBOOK_API_URL;
 const noteRoutes = express.Router();
 
 const validateId = (req, res, next) => {
@@ -17,15 +19,52 @@ const validateId = (req, res, next) => {
 
 noteRoutes.post("/", async (req, res) => {
   try {
-    const { name, content } = req.body;
+    const { name, content, notebookId } = req.body;
+    let validatedNotebookId = null;
 
-    if (!name && !content) {
+    // --- Validate required fields
+    if (!name || !content) {
       return res
         .status(httpStatus.BAD_REQUEST)
-        .json({ message: "name and content is required!!" });
+        .json({ message: "name and content are required!!" });
     }
 
-    const note = await Note.create({ name, content });
+    // --- Validate notebookId if provided
+    if (!notebookId) {
+      console.info({
+        message: "notebook id not provided. Storing note without notebook id",
+      });
+    } else if (!mongoose.Types.ObjectId.isValid(notebookId)) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ error: "Invalid notebookId", notebookId });
+    } else {
+      try {
+        await axios.get(`${notebooksAPIUrl}/${notebookId}`);
+        validatedNotebookId = notebookId;
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          return res
+            .status(httpStatus.BAD_REQUEST)
+            .json({ message: "Notebook not found" });
+        }
+        console.error({
+          message: "Error verifying notebookId with upstream notebook service",
+          notebookId,
+          error: error.message,
+        });
+        return res
+          .status(httpStatus.SERVICE_UNAVAILABLE)
+          .json({ message: "Notebook service unavailable" });
+      }
+    }
+
+    // --- Create the note
+    const note = await Note.create({
+      name,
+      content,
+      notebookId: validatedNotebookId,
+    });
 
     res.status(httpStatus.CREATED).json({ data: note });
   } catch (error) {

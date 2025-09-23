@@ -4,5 +4,7 @@ services:
       - notes-app-network
 
   notes:
+    environment:
+      - NOTEBOOK_API_URL=http://reverse-proxy/api/notebooks
     networks:
       - notes-app-network
