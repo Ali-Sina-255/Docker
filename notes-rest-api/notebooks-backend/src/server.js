@@ -1,10 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import { notebookRoutes } from "./routes.js"; // 👈 Don't forget the .js extension!
+import { notebookRoutes } from "./routes.js";
 
 const port = process.env.PORT;
 const dbUrl = process.env.DB_URL;
+
 const app = express();
 
 app.use(bodyParser.json());
